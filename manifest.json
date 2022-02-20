@@ -1,0 +1,22 @@
+{
+  "name": "fz-xero-reconcilation-chrome-extension",
+  "description": "Xero Reconcilation chrome extension",
+  "action": {},
+  "manifest_version": 3,
+  "version": "0.1",
+  "author": "fai@code3.io",
+  "description": "Turns the page red when you click the icon",
+  "icons": {
+    "16": "images/get_started16.png",
+    "32": "images/get_started32.png",
+    "48": "images/get_started48.png",
+    "128": "images/get_started128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
