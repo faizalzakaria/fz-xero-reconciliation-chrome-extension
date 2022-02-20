@@ -1,5 +1,5 @@
 
-function reddenPage() {
+function reconcile() {
   console.log('Starting');
 
   const MAX_TRIAL = 3;
@@ -95,6 +95,6 @@ function reddenPage() {
 chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
-    function: reddenPage
+    function: reconcile
   });
 });
