@@ -3,11 +3,16 @@ function reconcile() {
   console.log('Starting');
 
   const MAX_TRIAL = 3;
-  const TIMEOUT = 1000;
+  const TIMEOUT = 2000;
   let lines = document.querySelectorAll("#statementLines > .line");
+  let running = false;
 
   const getCode = (line) => line.querySelectorAll('.bank-transaction .details-container > .details > span')[3].innerHTML
   const clickFindAndMatch = (line) => line.querySelector(".statement > .tabs > a.t5.find").click()
+
+  const sleep = (ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
   const submitOk = (line, trial = 0) => {
     const okBtn = line.querySelector('.findMatch .actions a.reconcileButton');
@@ -22,7 +27,10 @@ function reconcile() {
       return false;
     }
 
-    setTimeout(() => okBtn.click(), TIMEOUT);
+    setTimeout(() => {
+      okBtn.click();
+      running = false;
+    }, TIMEOUT);
   }
 
   const unselectAll = (line) => {
@@ -46,6 +54,8 @@ function reconcile() {
       setTimeout(() => selectAll(line, trial + 1), TIMEOUT);
       return;
     }
+
+    // TODO: validate the content of the selected items
 
     if (trial >= MAX_TRIAL) {
       console.log('Failed Select All');
@@ -89,7 +99,7 @@ function reconcile() {
   }
 
   const line = lines[0];
-  runFindAndMatch(lines[0]);
+  runFindAndMatch(line);
 }
 
 chrome.action.onClicked.addListener((tab) => {
