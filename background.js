@@ -3,8 +3,7 @@ function reconcile() {
   console.log('Starting');
 
   const MAX_TRIAL = 3;
-  const TIMEOUT = 2000;
-  let lines = document.querySelectorAll("#statementLines > .line");
+  const TIMEOUT = 1000;
   let running = false;
 
   const getCode = (line) => line.querySelectorAll('.bank-transaction .details-container > .details > span')[3].innerHTML
@@ -14,11 +13,12 @@ function reconcile() {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  const submitOk = (line, trial = 0) => {
+  async function submitOk(line, trial = 0) {
     const okBtn = line.querySelector('.findMatch .actions a.reconcileButton');
 
     if (!okBtn && (trial < MAX_TRIAL)) {
-      setTimeout(() => submitOk(line, trial + 1), TIMEOUT);
+      await sleep(1000);
+      await submitOk(line, trial + 1);
       return;
     }
 
@@ -27,10 +27,10 @@ function reconcile() {
       return false;
     }
 
-    setTimeout(() => {
-      okBtn.click();
-      running = false;
-    }, TIMEOUT);
+    await sleep(1000);
+    okBtn.click();
+
+    console.log('Submitted ok');
   }
 
   const unselectAll = (line) => {
@@ -41,17 +41,19 @@ function reconcile() {
     })
   }
 
-  const selectAll = (line, trial = 0) => {
+  async function selectAll(line, trial = 0) {
     const div = line.querySelector('.findMatch #selectAllToggle label#selectAllLabel');
     const availableList = line.querySelectorAll('#availableTransactionList > div');
 
     if ((!availableList || !div) && (trial < MAX_TRIAL)) {
-      setTimeout(() => selectAll(line, trial + 1), TIMEOUT);
+      await sleep(1000);
+      await selectAll(line, trial + 1);
       return;
     }
 
     if (availableList.length <= 0) {
-      setTimeout(() => selectAll(line, trial + 1), TIMEOUT);
+      await sleep(1000)
+      await selectAll(line, trial + 1);
       return;
     }
 
@@ -64,15 +66,20 @@ function reconcile() {
 
     div.click();
 
+    await sleep(500);
+
+    console.log('Selected All');
+
     submitOk(line);
   }
 
-  const searchAndConfirm = (line, code, trial = 0) => {
+  async function searchAndConfirm(line, code, trial = 0) {
     const div = line.querySelector('.findMatch .bankrec-search-form');
 
     if (!div && (trial < MAX_TRIAL)) {
-      setTimeout(() => searchAndConfirm(line, code, trial + 1), TIMEOUT);
-      return;
+      await sleep(2000);
+      await searchAndConfirm(line, code, trial + 1);
+      return false;
     }
 
     if (trial >= MAX_TRIAL) {
@@ -87,19 +94,30 @@ function reconcile() {
     input.value = code;
     div.querySelector('.xbtn').click();
 
-    selectAll(line);
+    console.log('searched and confirmed');
+
+    await selectAll(line);
   }
 
-  const runFindAndMatch = (line) => {
+  async function runFindAndMatch(line) {
     const code = getCode(line);
     console.log(code);
 
     clickFindAndMatch(line);
-    searchAndConfirm(line, code);
+    await searchAndConfirm(line, code);
   }
 
-  const line = lines[0];
-  runFindAndMatch(line);
+  async function runAll() {
+    let lines = document.querySelectorAll("#statementLines > .line");
+
+    for (const line of lines) {
+      console.log('Running line');
+      await runFindAndMatch(line);
+      await sleep(1500);
+    }
+  }
+
+  runAll();
 }
 
 chrome.action.onClicked.addListener((tab) => {
