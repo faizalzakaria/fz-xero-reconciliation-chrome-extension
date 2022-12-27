@@ -6,7 +6,7 @@ function reconcile() {
   const TIMEOUT = 1000;
   let running = false;
 
-  const getCode = (line) => line.querySelectorAll('.bank-transaction .details-container > .details > span')[3].innerHTML
+  const getCode = (line) => line.querySelectorAll('.bank-transaction .details-container .line-details > span')[3].innerHTML
   const clickFindAndMatch = (line) => line.querySelector(".statement > .tabs > a.t5.find").click()
 
   const sleep = (ms) => {
