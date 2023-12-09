@@ -1,6 +1,6 @@
 
 function reconcile() {
-  console.log('Starting');
+  console.log('Reconciling transaction');
 
   const MAX_TRIAL = 3;
   const TIMEOUT = 1000;
@@ -120,9 +120,47 @@ function reconcile() {
   runAll();
 }
 
-chrome.action.onClicked.addListener((tab) => {
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    function: reconcile
-  });
+const reconcile_transfer = () => {
+  console.log('Reconciling transfer');
+
+  const paymentOptions = document.querySelector('#paymentOptions')
+
+  paymentOptions.querySelector('a').click()
+  paymentOptions.querySelectorAll('ul')[0].querySelector('a').click()
+}
+
+const mark_as_billplz_fee = () => {
+  console.log('Marking as billplz fee');
+
+  const rows = document.querySelectorAll('#ext-gen27 .x-grid3-row');
+  rows.forEach(row => {
+    const description = row.querySelector('.x-grid3-td-colDescription div').innerHTML
+    if (description === 'PER PAYMENT RECEIVED FEE') {
+      row.addClassName('x-grid3-row-selected');
+    }
+  })
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const { action } = message;
+
+  switch (action) {
+    case 'reconcile_transaction':
+      chrome.scripting.executeScript({
+        target: { tabId: message.tabId },
+        function: reconcile
+      });
+      break;
+    case 'reconcile_transfer':
+      chrome.scripting.executeScript({
+        target: { tabId: message.tabId },
+        function: reconcile_transfer
+      });
+      break;
+    case 'mark_as_billplz_fee':
+      chrome.scripting.executeScript({
+        target: { tabId: message.tabId },
+        function: mark_as_billplz_fee
+      })
+  }
 });
