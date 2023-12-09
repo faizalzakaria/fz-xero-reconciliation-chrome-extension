@@ -120,28 +120,6 @@ function reconcile() {
   runAll();
 }
 
-const reconcile_transfer = () => {
-  console.log('Reconciling transfer');
-
-  const paymentOptions = document.querySelector('#paymentOptions')
-
-  paymentOptions.querySelector('a').click()
-  paymentOptions.querySelectorAll('ul')[0].querySelector('a').click()
-}
-
-const mark_as_billplz_fee = () => {
-  console.log('Marking as billplz fee');
-
-  const rows = document.querySelectorAll('#ext-gen27 .x-grid3-row');
-  rows.forEach(row => {
-    const description = row.querySelector('.x-grid3-td-colDescription div').innerHTML
-    if (description === 'PER PAYMENT RECEIVED FEE') {
-      row.addClassName('x-grid3-row-selected');
-      console.log('here')
-    }
-  })
-}
-
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const { action, tabId } = message;
 
@@ -155,7 +133,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     case 'reconcile_transfer':
       chrome.scripting.executeScript({
         target: { tabId },
-        function: reconcile_transfer
+        files: ['reconcile_transfer.js']
       });
       break;
     case 'mark_as_billplz_fee':
