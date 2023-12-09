@@ -137,30 +137,32 @@ const mark_as_billplz_fee = () => {
     const description = row.querySelector('.x-grid3-td-colDescription div').innerHTML
     if (description === 'PER PAYMENT RECEIVED FEE') {
       row.addClassName('x-grid3-row-selected');
+      console.log('here')
     }
   })
 }
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  const { action } = message;
+  const { action, tabId } = message;
 
   switch (action) {
     case 'reconcile_transaction':
       chrome.scripting.executeScript({
-        target: { tabId: message.tabId },
+        target: { tabId },
         function: reconcile
       });
       break;
     case 'reconcile_transfer':
       chrome.scripting.executeScript({
-        target: { tabId: message.tabId },
+        target: { tabId },
         function: reconcile_transfer
       });
       break;
     case 'mark_as_billplz_fee':
       chrome.scripting.executeScript({
-        target: { tabId: message.tabId },
-        function: mark_as_billplz_fee
-      })
+        target: { tabId },
+        files: ['mark_as_billplz_fee.js']
+      });
+      break;
   }
 });

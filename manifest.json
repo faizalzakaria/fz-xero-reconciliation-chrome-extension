@@ -27,5 +27,11 @@
   ],
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["mark_as_billplz_fee.js"]
+    }
+  ]
 }
