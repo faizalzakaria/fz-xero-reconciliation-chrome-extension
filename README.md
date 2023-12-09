@@ -14,4 +14,4 @@ to reconcilation.
 
 Install this chrome extension, and go to xero reconilation page, and trigger this extension. For now it will only process 10 transactions per cycle.
 
-
+<img width="297" alt="Screenshot 2023-12-09 at 9 51 18 PM" src="https://github.com/faizalzakaria/fz-xero-reconciliation-chrome-extension/assets/3461316/d5187979-50b5-426f-91b3-8b500632ab05">
